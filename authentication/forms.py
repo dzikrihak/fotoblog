@@ -12,3 +12,9 @@ class SignupForm(UserCreationForm):
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=63)
     password = forms.CharField(max_length=63, widget=forms.PasswordInput)
+
+
+class UploadProfilePhotoForm(forms.ModelForm):
+    class Meta:
+        model = get_user_model()
+        fields = ('profile_photo',)
