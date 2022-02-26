@@ -6,7 +6,7 @@ from . import forms
 from . import models
 from django.forms import formset_factory
 from django.db.models import Q
-
+from django.core.paginator import Paginator
 
 
 @login_required
@@ -23,13 +23,20 @@ def home(request):
         key=lambda instance: instance.date_created,
         reverse=True
     )
+    paginator = Paginator(blogs_and_photos, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page('page')
+    context = {'page_obj': page_obj}
+
     # context = {
     #     'blogs': blogs,
     #     'photos': photos,
     # }
+    """
     context = {
         'blogs_and_photos': blogs_and_photos,
     }
+    """
     return render(request, 'blog/home.html', context=context)
 
 
@@ -137,4 +144,8 @@ def photo_feed(request):
     photos = models.Photo.objects.filter(
         uploader__in=request.user.follows.all()).order_by('-date_created')
     context = {'photos': photos, }
+    paginator = Paginator(photos, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {'page_obj': page_obj}
     return render(request, 'blog/photo_feed.html', context=context)
